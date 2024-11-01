@@ -1,0 +1,51 @@
+# unix mkfile for v9sh
+TESTDIR = .
+FRC =
+ROOT=
+INSDIR =
+DEFINES = # -DBSD4_2
+CC=cc
+CFLAGS = -O $DEFINES
+LDFLAGS = 
+LIBS=
+LINTFLAGS=-ha $DEFINES
+
+CFILES = main.c args.c cmd.c ctype.c defs.c error.c expand.c fault.c func.c \
+	io.c macro.c msg.c name.c pathserv.c print.c service.c spname.c stak.c \
+	string.c word.c xec.c
+OFILES = main.o args.o cmd.o ctype.o defs.o error.o expand.o fault.o func.o \
+	io.o macro.o msg.o name.o pathserv.o print.o service.o spname.o stak.o \
+	string.o word.o xec.o
+
+all:V: sh
+
+$OFILES: $FRC ctype.h defs.h mac.h mode.h name.h stak.h sym.h
+
+sh: $OFILES
+	$CC $CFLAGS $LDFLAGS $OFILES $LIBS -o $TESTDIR/${target}
+lint: $CFILES
+	lint $LINTFLAGS $CFILES | grep -v ':$'
+lint-p: $CFILES
+	lint -p $LINTFLAGS $CFILES | grep -v ':$'
+
+install:  all
+	mv /bin/sh /bin/osh && cp sh /bin/sh
+	/etc/chown bin,bin /bin/sh
+	chmod o-w,g+w /bin/sh
+
+clean:
+	rm -f *.o *.O sh shsize
+
+clobber:  clean
+	set -e
+	rm -f $TESTDIR/sh
+	rm -f $ROOT/bin/OLDrsh
+
+FRC:
+
+pp:
+	pp -tsh makefile *.h *.c | dimp -t | impr
+print: makefile *.h *.c
+	# pr -l132 $newprereq | impr -p
+	pp $newprereq
+	touch print

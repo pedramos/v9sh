@@ -1,0 +1,4 @@
+This is the V9 shell, modified as described in "A Partial Tour Through
+the Unix Shell".  The source has been updated for ANSI and POSIX
+compliance, and to cope with 64-bit systems.  getch() in macro.c has
+been rearranged and commented for greater clarity (I hope).
